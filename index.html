@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>英語プレイスメントテスト（CEFR Pre-A1〜C1）| 英語脳育成塾🄬</title>
+  <meta name="description" content="オンラインで10〜15分で完了する英語プレイスメントテスト（CEFR Pre-A1〜C1判定）。主催：英語脳育成塾🄬" />
+  <style>
+    :root{
+      --blue-1: #eaf4ff;
+      --blue-2: #cfe8ff;
+      --blue-3: #93c7ff;
+      --blue-4: #3b82f6;
+      --text: #0f172a;
+      --muted: #334155;
+      --card: #ffffffee;
+      --ok: #16a34a;
+      --warn: #f59e0b;
+      --bad: #ef4444;
+    }
+    html, body {
+      height: 100%;
+    }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans JP", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--text);
+      background: linear-gradient(155deg, var(--blue-1), var(--blue-2) 40%, #ffffff 90%);
+      background-attachment: fixed;
+    }
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    .card {
+      background: var(--card);
+      border-radius: 20px;
+      box-shadow: 0 10px 24px rgba(0,0,0,.08);
+      padding: 24px;
+      backdrop-filter: blur(6px);
+    }
+    header {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      margin-bottom: 16px;
+    }
+    h1 { font-size: clamp(20px, 3vw, 28px); margin: 0; }
+    .brand {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-weight: 700; color: var(--blue-4);
+    }
+    .badge { background: var(--blue-3); color: white; padding: 4px 10px; border-radius: 999px; font-size: 12px; }
+    .muted { color: var(--muted); }
+    .btn {
+      appearance: none; border: none; border-radius: 12px; padding: 12px 18px;
+      font-weight: 700; cursor: pointer; transition: transform .06s ease, box-shadow .2s ease;
+      background: var(--blue-4); color: white; box-shadow: 0 6px 14px rgba(59,130,246,.25);
+    }
+    .btn.secondary{ background: #e2e8f0; color: #0f172a; box-shadow: none; }
+    .btn.ghost{ background: transparent; color: var(--blue-4); border: 1px solid var(--blue-3); }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+    .btn:hover { transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+    .row { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    @media (min-width: 720px){
+      .row2 { grid-template-columns: 1fr 1fr; }
+    }
+    .timer {
+      font-variant-numeric: tabular-nums; font-weight: 800; letter-spacing: .5px;
+      padding: 8px 12px; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 2px var(--blue-3);
+      display: inline-flex; align-items: center; gap: 8px; min-width: 104px; justify-content: center;
+    }
+    .progress {
+      height: 10px; background: #e5f1ff; border-radius: 999px; overflow: hidden;
+    }
+    .progress > span { display:block; height:100%; background: var(--blue-4); width:0; transition: width .3s ease; }
+    .choice {
+      border: 1px solid #dbeafe; background: #fff; border-radius: 14px; padding: 12px 14px; cursor: pointer;
+      display: grid; grid-template-columns: 28px 1fr; gap: 12px; align-items: center;
+    }
+    .choice:hover{ box-shadow: 0 4px 16px rgba(59,130,246,.12); }
+    .choice input{ width: 20px; height: 20px; }
+    .choice.correct{ border-color: #86efac; background: #ecfdf5; }
+    .choice.incorrect{ border-color: #fecaca; background: #fef2f2; }
+    .pill { font-size: 12px; padding: 4px 8px; border-radius: 999px; background: #eff6ff; color: #1e3a8a; }
+    .footer { text-align: center; font-size: 12px; color: var(--muted); margin-top: 24px; }
+    .level-tag { font-weight: 800; color: #1d4ed8; }
+    .result-box { border: 2px solid #bfdbfe; border-radius: 16px; padding: 16px; background: #f8fbff; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <header>
+        <div>
+          <div class="brand">英語プレイスメントテスト <span class="badge">CEFR Pre-A1〜C1</span></div>
+          <div class="muted" style="margin-top:6px">主催：<strong>英語脳育成塾🄬</strong></div>
+        </div>
+        <div>
+          <div class="timer" id="timer">--:--</div>
+        </div>
+      </header>
+      <div class="progress" aria-label="進捗">
+        <span id="progressBar"></span>
+      </div>
+
+      <!-- START VIEW -->
+      <section id="startView" style="margin-top:20px;">
+        <h2>10〜15分で完了。実力に合うレベル（Pre-A1〜C1）を即時判定します。</h2>
+        <p class="muted">画面の指示に従って、もっとも自然だと思う選択肢を選んでください。戻る・スキップ可。時間切れになると自動採点します。</p>
+        <div class="row row2" style="margin-top:12px;">
+          <div>
+            <label>お名前（任意）<br>
+              <input id="nameInput" placeholder="例：佐藤ミサキ" style="width:100%;padding:12px;border-radius:12px;border:1px solid #cbd5e1" />
+            </label>
+          </div>
+          <div>
+            <label>メール（任意・結果送付用）<br>
+              <input id="emailInput" placeholder="example@example.com" type="email" style="width:100%;padding:12px;border-radius:12px;border:1px solid #cbd5e1" />
+            </label>
+          </div>
+        </div>
+        <details style="margin-top:12px">
+          <summary class="muted">オプション設定（クリックで開く）</summary>
+          <div class="row row2" style="margin-top:12px;">
+            <div>
+              <label>制限時間（分）<br>
+                <input id="minutesInput" type="number" min="10" max="15" value="12" style="width:100%;padding:12px;border-radius:12px;border:1px solid #cbd5e1" />
+              </label>
+            </div>
+            <div>
+              <label>問題順序<br>
+                <select id="orderInput" style="width:100%;padding:12px;border-radius:12px;border:1px solid #cbd5e1">
+                  <option value="ascending">易→難（推奨）</option>
+                  <option value="shuffled">ランダム</option>
+                </select>
+              </label>
+            </div>
+          </div>
+        </details>
+        <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:16px;">
+          <button class="btn" id="startBtn">テストを開始</button>
+          <button class="btn ghost" id="tryDemoBtn" title="2分のデモ（各レベル1問）">デモで試す（約2分）</button>
+        </div>
+        <p class="footer">※本テストは初回判定の目安です。CEFRは技能ごとのプロフィールで捉えることを推奨しています。必要に応じて面接・スピーキングで補正します。</p>
+      </section>
+
+      <!-- QUIZ VIEW -->
+      <section id="quizView" class="hidden" style="margin-top:8px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:8px;">
+          <div id="qMeta" class="muted"></div>
+          <div class="pill" id="levelPill"></div>
+        </div>
+        <h2 id="qText" style="margin-top:0"></h2>
+        <div id="choices" class="row" style="margin-top:4px;"></div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:16px;">
+          <button class="btn secondary" id="prevBtn">戻る</button>
+          <button class="btn" id="nextBtn">次へ</button>
+          <button class="btn ghost" id="skipBtn">スキップ</button>
+          <button class="btn ghost" id="finishBtn">今すぐ採点</button>
+        </div>
+      </section>
+
+      <!-- RESULT VIEW -->
+      <section id="resultView" class="hidden" style="margin-top:12px;">
+        <h2>判定結果</h2>
+        <div class="result-box">
+          <p style="margin:0 0 6px">推定到達レベル：</p>
+          <p style="font-size:28px; margin:0 0 10px"><span class="level-tag" id="finalLevel">—</span></p>
+          <div id="levelExplain" class="muted" style="margin-bottom:12px"></div>
+          <div id="breakdown" class="row row2"></div>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:16px;">
+          <button class="btn" id="downloadBtn">結果をCSVで保存</button>
+          <button class="btn secondary" id="restartBtn">もう一度受ける</button>
+        </div>
+        <p class="footer">主催：<strong>英語脳育成塾🄬</strong>｜このツールはCEFR（2020 Companion Volume）に基づく目安判定です。</p>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    // ===============================
+    // CEFR Placement Test (Pre-A1 to C1)
+    // Single-file web app (no deps) by "Google-style" engineering
+    // ===============================
+
+    // --- Data Model ---
+    /**
+     * Questions are grouped by CEFR level. 
+     * 6 levels covered: Pre-A1, A1, A2, B1, B2, C1
+     * Each level: 4 questions (short MC), designed to finish within ~12 minutes (24 Q total).
+     * Scoring rule: mastery if >=3/4 correct at that level. Final level is the highest level with mastery;
+     * if none mastered, return Pre-A1 when it's the best fit by total score.
+     */
+
+    const CEFR_LEVELS = ["Pre-A1", "A1", "A2", "B1", "B2", "C1"];
+
+    // Minimal descriptor snippets (for feedback). Based on CEFR ideas; simplified wording for UI.
+    const LEVEL_DESC = {
+      "Pre-A1": "ゆっくり・はっきりした簡単な語やフレーズを、身近な状況で部分的に理解・使用できます（例：自己紹介、挨拶）。",
+      "A1": "身近な表現や基本語彙を使って、簡単なやり取りができます（自己・家族・買い物・場所・仕事など）。",
+      "A2": "日常のよくある場面で、短い会話や定型表現を使って情報交換ができます（例：道案内、簡単な説明）。",
+      "B1": "身近な話題の要点理解や、経験・計画の説明ができます。予測できる状況なら自立して対処可能。",
+      "B2": "抽象的なテーマや専門外の話題でも、主張を構成して意見交換ができます。幅広い文章の要点を理解。",
+      "C1": "複雑な長文の含意を把握し、語彙・構文を柔軟に使って説得的に話し書きできます。多様な文体に対応。"
+    };
+
+    // 24 multiple-choice items (4 per level). Each: {id, level, text, choices: [..], answer}
+    const QUESTION_BANK = [
+      // ------- Pre-A1 (4) -------
+      { id: "P1", level: "Pre-A1", text: "(挨拶) — Hello! How are you?", choices: ["I fine, thank you.", "I'm fine, thank you.", "I am goodly.", "Me fine."], answer: 1 },
+      { id: "P2", level: "Pre-A1", text: "(自己紹介) — ___ name is Ken.", choices: ["Me", "Mine", "My", "I"], answer: 2 },
+      { id: "P3", level: "Pre-A1", text: "(be動詞) — I ___ from Japan.", choices: ["is", "are", "am", "be"], answer: 2 },
+      { id: "P4", level: "Pre-A1", text: "(単語) — Choose the picture word: 'cat'", choices: ["dog", "cat", "car", "cap"], answer: 1 },
+
+      // ------- A1 (4) -------
+      { id: "A1", level: "A1", text: "(時刻) — What time is it? — ___", choices: ["It's three o'clock.", "It's three hours.", "Three is time.", "Time three."], answer: 0 },
+      { id: "A2", level: "A1", text: "(冠詞) — I have ___ umbrella.", choices: ["a", "an", "the", "—"], answer: 1 },
+      { id: "A3", level: "A1", text: "(場所) — She is ___ the station.", choices: ["in", "at", "on", "to"], answer: 1 },
+      { id: "A4", level: "A1", text: "(頻度) — I ___ go to the gym on Sundays.", choices: ["always", "am always", "always am", "am"], answer: 0 },
+
+      // ------- A2 (4) -------
+      { id: "B1", level: "A2", text: "(過去形) — We ___ tennis yesterday.", choices: ["play", "played", "are playing", "have played"], answer: 1 },
+      { id: "B2", level: "A2", text: "(前置詞) — He is interested ___ music.", choices: ["on", "at", "about", "in"], answer: 3 },
+      { id: "B3", level: "A2", text: "(依頼) — Could you ___ me your phone number?", choices: ["say", "tell", "speak", "talk"], answer: 1 },
+      { id: "B4", level: "A2", text: "(読解) — 'The store opens at 10 a.m.' What does it mean?", choices: ["You can go in after 10.", "You must leave at 10.", "It closes at 10.", "It is busy at 10."], answer: 0 },
+
+      // ------- B1 (4) -------
+      { id: "C1", level: "B1", text: "(推測) — It looks cloudy. It ___ rain later.", choices: ["must", "should", "might", "can't"], answer: 2 },
+      { id: "C2", level: "B1", text: "(語彙) — I can't put up with this noise. 'put up with' means ___", choices: ["create", "tolerate", "increase", "reduce"], answer: 1 },
+      { id: "C3", level: "B1", text: "(接続詞) — I'll call you ___ I arrive.", choices: ["during", "until", "while", "when"], answer: 3 },
+      { id: "C4", level: "B1", text: "(読解) — Choose the best title: 'Many people now work from home using the internet.'", choices: ["Working in Factories", "Online Shopping", "Remote Work Trend", "Travel Tips"], answer: 2 },
+
+      // ------- B2 (4) -------
+      { id: "D1", level: "B2", text: "(語彙) — The policy was 'controversial'. The closest meaning is ___", choices: ["popular", "expensive", "divisive", "temporary"], answer: 2 },
+      { id: "D2", level: "B2", text: "(文構造) — Hardly ___ the meeting start when the fire alarm rang.", choices: ["had", "has", "did", "was"], answer: 0 },
+      { id: "D3", level: "B2", text: "(談話) — Choose the best continuation: 'Sales fell in Q2; ___, we must cut costs.'", choices: ["otherwise", "therefore", "however", "in contrast"], answer: 1 },
+      { id: "D4", level: "B2", text: "(読解・含意) — 'He is economical with the truth.' implies he ___", choices: ["is very honest", "lies directly", "avoids the topic", "doesn't always tell everything"], answer: 3 },
+
+      // ------- C1 (4) -------
+      { id: "E1", level: "C1", text: "(書き換え) — 'Although it was raining, we continued.' → '___ the rain, we continued.'", choices: ["Despite", "Because of", "Owing to", "Thanks to"], answer: 0 },
+      { id: "E2", level: "C1", text: "(語法) — She spoke in such a ___ manner that everyone paid attention.", choices: ["compelling", "compelled", "compel", "compulsion"], answer: 0 },
+      { id: "E3", level: "C1", text: "(談話機能) — Choose the most formal email opening:", choices: ["Hi there!", "Dear Ms. Tanaka,", "Hey Tanaka-san,", "To Tanaka"], answer: 1 },
+      { id: "E4", level: "C1", text: "(読解・評価) — The author's tone is best described as ___: 'While the initiative appears promising, its metrics remain opaque.'", choices: ["enthusiastic", "cautiously critical", "sarcastic", "indifferent"], answer: 1 },
+    ];
+
+    // --- State ---
+    let state = {
+      started: false,
+      demoMode: false,
+      order: "ascending",
+      minutes: 12,
+      idx: 0,
+      items: [],
+      answers: {}, // id -> selectedIndex
+      startAt: null,
+      endAt: null,
+      timerHandle: null,
+      remainingSec: 0
+    };
+
+    // --- Elements ---
+    const startView = document.getElementById('startView');
+    const quizView = document.getElementById('quizView');
+    const resultView = document.getElementById('resultView');
+    const timerEl = document.getElementById('timer');
+    const progressBar = document.getElementById('progressBar');
+    const qMeta = document.getElementById('qMeta');
+    const levelPill = document.getElementById('levelPill');
+    const qText = document.getElementById('qText');
+    const choicesEl = document.getElementById('choices');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const skipBtn = document.getElementById('skipBtn');
+    const finishBtn = document.getElementById('finishBtn');
+    const finalLevelEl = document.getElementById('finalLevel');
+    const levelExplain = document.getElementById('levelExplain');
+    const breakdown = document.getElementById('breakdown');
+
+    // --- Helpers ---
+    function $(sel){ return document.querySelector(sel); }
+
+    function shuffle(arr){
+      const a = arr.slice();
+      for(let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+      return a;
+    }
+
+    function formatTime(sec){
+      const m = Math.floor(sec/60).toString().padStart(2,'0');
+      const s = Math.floor(sec%60).toString().padStart(2,'0');
+      return `${m}:${s}`;
+    }
+
+    function buildItems(order, demo){
+      if(demo){
+        // one per level
+        const byLvl = CEFR_LEVELS.map(l => QUESTION_BANK.find(q => q.level === l));
+        return order === 'shuffled' ? shuffle(byLvl) : byLvl;
+      }
+      if(order === 'shuffled') return shuffle(QUESTION_BANK);
+      // ascending: group by levels low->high
+      const items = [];
+      for(const L of CEFR_LEVELS){ items.push(...QUESTION_BANK.filter(q=>q.level===L)); }
+      return items;
+    }
+
+    function startTest({minutes, order, demo}){
+      state.started = true;
+      state.demoMode = !!demo;
+      state.minutes = minutes;
+      state.order = order;
+      state.items = buildItems(order, demo);
+      state.idx = 0;
+      state.answers = {};
+      state.startAt = new Date();
+      state.remainingSec = minutes*60;
+      startView.classList.add('hidden');
+      resultView.classList.add('hidden');
+      quizView.classList.remove('hidden');
+      renderQuestion();
+      runTimer();
+      saveLocalDraft();
+    }
+
+    function runTimer(){
+      if(state.timerHandle) clearInterval(state.timerHandle);
+      timerEl.textContent = formatTime(state.remainingSec);
+      state.timerHandle = setInterval(()=>{
+        state.remainingSec -= 1;
+        if(state.remainingSec < 0){
+          clearInterval(state.timerHandle);
+          finish();
+        } else {
+          timerEl.textContent = formatTime(state.remainingSec);
+          if(state.remainingSec === 60) timerEl.style.background = '#fff7ed'; // visual cue when <1m
+        }
+      }, 1000);
+    }
+
+    function renderQuestion(){
+      const i = state.idx;
+      const q = state.items[i];
+      qMeta.textContent = `Q${i+1} / ${state.items.length}`;
+      levelPill.textContent = q.level;
+      qText.textContent = q.text;
+      choicesEl.innerHTML = '';
+      q.choices.forEach((c, idx)=>{
+        const wrap = document.createElement('label');
+        wrap.className = 'choice';
+        wrap.innerHTML = `<input type="radio" name="choice" value="${idx}"> <div>${c}</div>`;
+        const saved = state.answers[q.id];
+        if(saved === idx){ wrap.classList.add('selected'); wrap.querySelector('input').checked = true; }
+        wrap.addEventListener('click', (e)=>{
+          state.answers[q.id] = idx;
+          saveLocalDraft();
+          renderChoicesFeedback(null); // clear any previous marking
+        });
+        choicesEl.appendChild(wrap);
+      });
+      progressBar.style.width = `${(i/state.items.length)*100}%`;
+      prevBtn.disabled = i===0;
+      nextBtn.disabled = false;
+    }
+
+    function renderChoicesFeedback(correctIdx){
+      // If correctIdx provided, mark correctness colors (used on finish)
+      const radios = choicesEl.querySelectorAll('.choice');
+      radios.forEach((el, i)=>{
+        el.classList.remove('correct','incorrect');
+        if(correctIdx==null) return;
+        if(i===correctIdx) el.classList.add('correct');
+        if(el.querySelector('input').checked && i!==correctIdx) el.classList.add('incorrect');
+      });
+    }
+
+    function move(delta){
+      const n = state.idx + delta;
+      if(n<0 || n>=state.items.length) return;
+      state.idx = n;
+      renderQuestion();
+    }
+
+    function finish(){
+      if(state.timerHandle) clearInterval(state.timerHandle);
+      state.endAt = new Date();
+      // compute score per level
+      const perLevel = {};
+      for(const L of CEFR_LEVELS){ perLevel[L] = { total:0, correct:0, ids:[] }; }
+      const detailed = [];
+      state.items.forEach(q=>{
+        perLevel[q.level].total++;
+        perLevel[q.level].ids.push(q.id);
+        const sel = state.answers[q.id];
+        const correct = sel===q.answer;
+        if(sel!=null) detailed.push({id:q.id, level:q.level, selected: sel, correctIdx: q.answer, correct});
+        if(correct) perLevel[q.level].correct++;
+      });
+
+      // determine mastery (>=3/4 on full test, or >=1/1 in demo)
+      let finalLevel = CEFR_LEVELS[0];
+      for(const L of CEFR_LEVELS){
+        const req = state.demoMode ? 1 : 3; // demo uses one item per level
+        if(perLevel[L].correct >= req) finalLevel = L; else break;
+      }
+
+      // UI render
+      quizView.classList.add('hidden');
+      resultView.classList.remove('hidden');
+      finalLevelEl.textContent = finalLevel;
+      levelExplain.textContent = LEVEL_DESC[finalLevel] || '';
+
+      // breakdown cards
+      breakdown.innerHTML = '';
+      for(const L of CEFR_LEVELS){
+        const {correct, total} = perLevel[L];
+        const ratio = total? Math.round((correct/total)*100):0;
+        const color = ratio>=75? 'var(--ok)': (ratio>=50? 'var(--warn)':'var(--bad)');
+        const div = document.createElement('div');
+        div.className = 'card';
+        div.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+            <div class="level-tag">${L}</div>
+            <div style="font-weight:800; color:${color}">${correct}/${total}</div>
+          </div>
+          <div class="progress" style="margin-top:8px"><span style="width:${ratio}%; background:${color}"></span></div>
+        `;
+        breakdown.appendChild(div);
+      }
+
+      // allow CSV download
+      document.getElementById('downloadBtn').onclick = () => exportCSV(finalLevel, perLevel, detailed);
+      saveLocalDraft(true); // mark as finished
+    }
+
+    function exportCSV(finalLevel, perLevel, detailed){
+      const name = (document.getElementById('nameInput').value||'').replace(/,/g,' ');
+      const email = (document.getElementById('emailInput').value||'');
+      const started = state.startAt? state.startAt.toISOString():'';
+      const ended = state.endAt? state.endAt.toISOString():'';
+      let csv = 'name,email,final_level,minutes,set_order,started_at,ended_at\n';
+      csv += `${name},${email},${finalLevel},${state.minutes},${state.order},${started},${ended}\n`;
+      csv += '\nlevel,correct,total\n';
+      for(const L of CEFR_LEVELS){ csv += `${L},${perLevel[L].correct},${perLevel[L].total}\n`; }
+      csv += '\nquestion_id,level,selected_idx,correct_idx,correct\n';
+      detailed.forEach(r=>{ csv += `${r.id},${r.level},${r.selected ?? ''},${r.correctIdx},${r.correct}\n`; });
+      const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = `placement_result_${Date.now()}.csv`;
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function saveLocalDraft(finished=false){
+      const payload = {
+        v: 1,
+        started: state.started,
+        finished,
+        demo: state.demoMode,
+        minutes: state.minutes,
+        order: state.order,
+        idx: state.idx,
+        answers: state.answers,
+        startAt: state.startAt? state.startAt.toISOString():null,
+      };
+      localStorage.setItem('cefrPlacementDraft', JSON.stringify(payload));
+    }
+
+    // --- Event bindings ---
+    document.getElementById('startBtn').addEventListener('click', ()=>{
+      const minutes = Math.max(10, Math.min(15, parseInt(document.getElementById('minutesInput').value||'12', 10)));
+      const order = document.getElementById('orderInput').value;
+      startTest({minutes, order, demo:false});
+    });
+
+    document.getElementById('tryDemoBtn').addEventListener('click', ()=>{
+      startTest({minutes: 2, order: 'ascending', demo:true});
+    });
+
+    nextBtn.addEventListener('click', ()=> move(1));
+    prevBtn.addEventListener('click', ()=> move(-1));
+    skipBtn.addEventListener('click', ()=>{ state.answers[state.items[state.idx].id] = undefined; move(1); });
+    finishBtn.addEventListener('click', finish);
+    document.getElementById('restartBtn').addEventListener('click', ()=>{ location.reload(); });
+
+    // --- Deep-link: allow ?t=12 (minutes), ?order=shuffled ---
+    (function initFromQuery(){
+      const sp = new URLSearchParams(location.search);
+      const t = parseInt(sp.get('t'), 10);
+      if(!isNaN(t)) document.getElementById('minutesInput').value = String(Math.max(10, Math.min(15, t)));
+      const ord = sp.get('order');
+      if(ord && (ord==='ascending'||ord==='shuffled')) document.getElementById('orderInput').value = ord;
+    })();
+
+  </script>
+</body>
+</html>
